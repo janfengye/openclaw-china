@@ -49,7 +49,7 @@ OpenClaw China 为 OpenClaw 提供面向中国常用通讯平台的渠道扩展�
       <sub><strong>欢迎同学们一起开发~</strong></sub>
     </td>
     <td align="center">
-      <img src="doc/images/15.jpg" alt="交流群二维码" width="180" />
+      <img src="doc/images/image.png" alt="交流群二维码" width="180" />
     </td>
   </tr>
 </table>
@@ -188,7 +188,7 @@ OpenClaw China 为 OpenClaw 提供面向中国常用通讯平台的渠道扩展�
 | 多账户 | ✅ | -  | ✅ | ✅ | ✅ | ⚠️<br />开发中 | ⚠️<br />开发中 |
 | 主动发送消息<br />（定时任务） | ✅ | ✅ | ✅ | ✅ | ✅ | ⚠️<br />开发中 | ⚠️<br />开发中 |
 
-> 说明：`qqbot` 现在支持 QQ 平台原生 `stream_messages` 流式输出，但只覆盖 `C2C` 私聊，且默认关闭，需要显式设置 `channels.qqbot.streaming=true`。群聊、频道、`replyFinalOnly=true`、结构化 Markdown 和媒体回复仍会回退到原有普通发送链路；tool / progress 文本保持普通消息实时回发。
+> 说明：`qqbot` 现在支持 QQ 平台原生 `stream_messages` 流式输出，但只覆盖 `C2C` 私聊，且默认关闭，需要显式设置 `channels.qqbot-china.streaming=true`。群聊、频道、`replyFinalOnly=true`、结构化 Markdown 和媒体回复仍会回退到原有普通发送链路；tool / progress 文本保持普通消息实时回发。
 >
 > `qqbot` 在 QQ 私聊里处理长 Markdown 表格时，会优先缓冲连续的结构化内容，再按“完整表头 + 完整行”安全切分；续块会自动补回表头。如果上游流式把同一行拆成几段，插件也会先在本地合并后再发送，尽量避免把半截表格直接发给 QQ。
 >
@@ -201,9 +201,14 @@ OpenClaw China 为 OpenClaw 提供面向中国常用通讯平台的渠道扩展�
 <details>
 <summary><strong>点击展开更新日志</strong></summary>
 
+### 2026-04-23
+
+- 新增 `@openclaw-china/setup` 一键安装脚本，可直接通过 `npx @openclaw-china/setup` 引导安装与初始化 OpenClaw China。
+- `qqbot` 的配置入口切换为 `channels.qqbot-china`，用于避免与 OpenClaw 官方内置 QQ 插件的 `channels.qqbot` 配置名冲突。
+
 ### 2026-03-29
 
-- `qqbot` 新增 QQ 平台原生 C2C 流式回复支持。开启 `channels.qqbot.streaming=true` 后，AI 正文会通过 `stream_messages` 以单条消息实时更新，呈现更接近打字机的效果。
+- `qqbot` 新增 QQ 平台原生 C2C 流式回复支持。开启 `channels.qqbot-china.streaming=true` 后，AI 正文会通过 `stream_messages` 以单条消息实时更新，呈现更接近打字机的效果。
 - 流式模式继续保留可见的 tool / progress 文本；assistant 正文一旦成功进入流式会话，就不会再额外重复发送成普通文本消息。
 - 为避免破坏现有稳定性，群聊、频道、`replyFinalOnly=true`、带媒体的回复，以及命中结构化 Markdown 安全传输的 C2C 回复，仍保持原有发送策略。
 
@@ -254,7 +259,7 @@ OpenClaw China 为 OpenClaw 提供面向中国常用通讯平台的渠道扩展�
 ### 2026-03-17
 
 - `qqbot` 优化了 QQ 私聊长思考时的 `对方正在输入中` 指示。收到 C2C 消息后会先发一次 typing，并支持通过配置切换为不续发、按空档续发或固定间隔续发。
-- 同步补充文档说明：这项能力对应 QQ 平台的 typing 指示，不等同于客户端自己的临时 loading 气泡常驻；如果你希望长思考时更早给用户稳定的可见反馈，建议把 `channels.qqbot.longTaskNoticeDelayMs` 调低到 `5000` 到 `10000`。
+- 同步补充文档说明：这项能力对应 QQ 平台的 typing 指示，不等同于客户端自己的临时 loading 气泡常驻；如果你希望长思考时更早给用户稳定的可见反馈，建议把 `channels.qqbot-china.longTaskNoticeDelayMs` 调低到 `5000` 到 `10000`。
 - `wecom` 智能机器人长连接 `ws` 模式现已支持本地图片、文件、语音、视频的原生媒体发送。
 - Merge PR #148：调整 `wecom` 长连接消息的占位 ACK 时机。现在只有消息真正被 OpenClaw 接收并开始分发后，才会回发 `⏳` 占位，减少“实际未受理却先显示处理中”的误导。
 - `wecom` 新增内置 `wecom-doc` skill，支持创建和编辑企业微信文档、智能表格。
@@ -365,7 +370,15 @@ OpenClaw China 为 OpenClaw 提供面向中国常用通讯平台的渠道扩展�
 ### 1) 安装
 
 
-#### 方式一：从 npm 安装
+#### 方式一：推荐，使用 npm 安装器（全平台通用）
+
+```bash
+npx @openclaw-china/setup
+```
+
+#### 方式二：通过 OpenClaw 直接安装
+
+> ℹ️ 这条路径由 OpenClaw 自己解析，当前行为是 `ClawHub` 优先、npm 回退。
 
 **安装统一包（包含所有渠道）**
 
@@ -410,17 +423,13 @@ openclaw china setup
 openclaw plugins install @openclaw-china/wecom
 openclaw china setup
 ```
-
 #### 更新插件
 
 ```bash
 openclaw plugins update channels
 ```
 
-
-#### 方式二：从源码安装（全平台通用）
-
-> ⚠️ **Windows 用户注意**：由于 OpenClaw 存在 Windows 兼容性问题（`spawn npm ENOENT`），npm 安装方式暂不可用，请使用方式二。
+#### 方式三：从源码安装（适合开发调试）
 
 ```bash
 git clone https://github.com/BytePioneer-AI/openclaw-china.git
@@ -440,8 +449,6 @@ pnpm build
 ```
 
 > 链接模式下构建后即生效，重启 Gateway 即可。
-
-> ℹ️ 如果你使用的是旧名称 **clawbot**，请使用 `@openclaw-china/channels@0.1.12`。
 
 ### 2) 配置渠道
 
@@ -691,20 +698,20 @@ openclaw config set channels.wechat-mp.asr.secretKey your-tencent-secret-key
 > 📖 **[QQ 渠道配置指南](https://github.com/BytePioneer-AI/openclaw-china/blob/main/doc/guides/qqbot/configuration.md)**
 
 ```bash
-openclaw config set channels.qqbot.enabled true
-openclaw config set channels.qqbot.appId your-app-id
-openclaw config set channels.qqbot.clientSecret your-app-secret
-openclaw config set channels.qqbot.markdownSupport true
-openclaw config set channels.qqbot.c2cMarkdownDeliveryMode proactive-all
-openclaw config set channels.qqbot.c2cMarkdownChunkStrategy markdown-block
-openclaw config set channels.qqbot.streaming true
-openclaw config set channels.qqbot.typingHeartbeatMode idle
-openclaw config set channels.qqbot.typingHeartbeatIntervalMs 5000
-openclaw config set channels.qqbot.typingInputSeconds 60
-openclaw config set channels.qqbot.autoSendLocalPathMedia false
+openclaw config set channels.qqbot-china.enabled true
+openclaw config set channels.qqbot-china.appId your-app-id
+openclaw config set channels.qqbot-china.clientSecret your-app-secret
+openclaw config set channels.qqbot-china.markdownSupport true
+openclaw config set channels.qqbot-china.c2cMarkdownDeliveryMode proactive-all
+openclaw config set channels.qqbot-china.c2cMarkdownChunkStrategy markdown-block
+openclaw config set channels.qqbot-china.streaming true
+openclaw config set channels.qqbot-china.typingHeartbeatMode idle
+openclaw config set channels.qqbot-china.typingHeartbeatIntervalMs 5000
+openclaw config set channels.qqbot-china.typingInputSeconds 60
+openclaw config set channels.qqbot-china.autoSendLocalPathMedia false
 
 # 如果你希望长思考时更早出现稳定的可见消息，可选：
-openclaw config set channels.qqbot.longTaskNoticeDelayMs 5000
+openclaw config set channels.qqbot-china.longTaskNoticeDelayMs 5000
 ```
 
 也可以直接使用一条命令完成接入：
@@ -716,16 +723,16 @@ openclaw channels add --channel qqbot --token "AppID:ClientSecret"
 （可选）开启语音转文本（腾讯云 Flash ASR）：
 
 ```bash
-openclaw config set channels.qqbot.asr.enabled true
-openclaw config set channels.qqbot.asr.appId your-tencent-app-id
-openclaw config set channels.qqbot.asr.secretId your-tencent-secret-id
-openclaw config set channels.qqbot.asr.secretKey your-tencent-secret-key
+openclaw config set channels.qqbot-china.asr.enabled true
+openclaw config set channels.qqbot-china.asr.appId your-tencent-app-id
+openclaw config set channels.qqbot-china.asr.secretId your-tencent-secret-id
+openclaw config set channels.qqbot-china.asr.secretKey your-tencent-secret-key
 ```
 
 如果你希望回复里保留本地证据路径文本，而不是把 `/root/.openclaw/media/qqbot/inbound/...jpeg` 自动再次作为图片发送，可设置：
 
 ```bash
-openclaw config set channels.qqbot.autoSendLocalPathMedia false
+openclaw config set channels.qqbot-china.autoSendLocalPathMedia false
 ```
 
 私聊 C2C Markdown 渲染建议：
@@ -733,9 +740,9 @@ openclaw config set channels.qqbot.autoSendLocalPathMedia false
 - 如果你希望 QQ 私聊尽量完整渲染标题、引用、分割线、任务列表、表格等 Markdown，建议显式开启：
 
 ```bash
-openclaw config set channels.qqbot.markdownSupport true
-openclaw config set channels.qqbot.c2cMarkdownDeliveryMode proactive-all
-openclaw config set channels.qqbot.c2cMarkdownChunkStrategy markdown-block
+openclaw config set channels.qqbot-china.markdownSupport true
+openclaw config set channels.qqbot-china.c2cMarkdownDeliveryMode proactive-all
+openclaw config set channels.qqbot-china.c2cMarkdownChunkStrategy markdown-block
 ```
 
 - `c2cMarkdownDeliveryMode` 只控制私聊 Markdown 走被动发送还是主动发送：
@@ -752,13 +759,13 @@ openclaw config set channels.qqbot.c2cMarkdownChunkStrategy markdown-block
 - 开启方式：
 
 ```bash
-openclaw config set channels.qqbot.streaming true
+openclaw config set channels.qqbot-china.streaming true
 ```
 
 - 多账号场景可改为账户级配置，例如：
 
 ```bash
-openclaw config set channels.qqbot.accounts.main.streaming true
+openclaw config set channels.qqbot-china.accounts.main.streaming true
 ```
 
 - 这项能力只对 `C2C` 私聊生效，默认关闭
@@ -804,7 +811,7 @@ const targets = listKnownQQBotTargets({ accountId: "default" });
 await sendProactiveQQBotMessage({
   cfg: {
     channels: {
-      qqbot: {
+      "qqbot-china": {
         appId: "your-app-id",
         clientSecret: "your-app-secret",
       },
@@ -820,7 +827,7 @@ await sendProactiveQQBotMessage({
 ```json
 {
   "channels": {
-    "qqbot": {
+    "qqbot-china": {
       "displayAliases": {
         "user:u-123456": "Alice"
       },
@@ -984,7 +991,7 @@ openclaw china setup
       "clientId": "dingxxxxxx",
       "clientSecret": "your-app-secret"
     },
-    "qqbot": {
+    "qqbot-china": {
       "enabled": true,
       "appId": "your-app-id",
       "clientSecret": "your-app-secret"
@@ -1091,7 +1098,7 @@ flowchart TD
 
 **欢迎同学们一起开发~**
 
-<img src="doc/images/15.jpg" alt="交流群二维码" width="50%" />
+<img src="doc/images/image.png" alt="交流群二维码" width="50%" />
 
 
 
